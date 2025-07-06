@@ -32,12 +32,35 @@ def generate_password():
 
     pyperclip.copy(password) # Copy to the clipboard
 
-# ---------------------------- SAVE PASSWORD ------------------------------- #
+# ---------------------------- SEARCH EMAIL/PASSWORD ------------------------------- #
+def search():
+    """Search the json file, provides the email and password"""
 
+    try:
+        with open("details.json", "r") as file:
+            data = json.load(file)
+    
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error", message="There is no data file")
+    
+    else:
+
+        try:
+                website = text_website.get().title()
+                email = data[website]['email']
+                password = data[website]['password']
+
+        except KeyError:
+            messagebox.showinfo(title="Oops", message=f"There is no email or password for '{website}'")
+
+        else:
+            messagebox.showinfo(title="Confidential", message=f"Email: {email}\nPassword: {password}")
+
+# ---------------------------- SAVE PASSWORD ------------------------------- #
 def data():
     """Saves the website, email, and password to a text file after user confirmation."""
-    website = text_website.get()
-    email = text_email_username.get() 
+    website = text_website.get().title()
+    email = text_email_username.get().lower()
     password = text_password.get()
 
     new_data = {
@@ -95,8 +118,8 @@ label_password = Label(text="Password:")
 label_password.grid(column=0, row=3)
 
 # Text Entry
-text_website = Entry(width=55)
-text_website.grid(column=1, row=1, columnspan=2)
+text_website = Entry(width=36)
+text_website.grid(column=1, row=1)
 text_website.focus()
 
 text_email_username = Entry(width=55)
@@ -107,6 +130,10 @@ text_password = Entry(width=36)
 text_password.grid(column=1, row=3)
 
 # Buttons
+
+button_search = Button(text="Search", command=search, width=15)
+button_search.grid(column=2, row=1)
+
 button_generate = Button(text="Generate Password", command=generate_password)
 button_generate.grid(column=2, row=3)
 
